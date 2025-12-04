@@ -10,33 +10,33 @@
 
 ## 📊 資料匯出/下載頁面 URI（作業要求）
 
-部署後，請將 `https://your-app-name.onrender.com` 替換為你的實際網址：
+**✅ 已部署！API 網址：** `https://emogo-backend-leoalwaysgiveup.onrender.com`
 
 ### 🎯 三種資料類型的匯出端點：
 
 1. **📹 Vlogs（影片日誌）**  
    ```
-   GET https://your-app-name.onrender.com/export/vlogs
+   GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/vlogs
    ```
 
 2. **💭 Sentiments（情緒資料）**  
    ```
-   GET https://your-app-name.onrender.com/export/sentiments
+   GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/sentiments
    ```
 
 3. **📍 GPS Coordinates（GPS 座標）**  
    ```
-   GET https://your-app-name.onrender.com/export/gps
+   GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/gps
    ```
 
 ### 📈 統計資訊端點：
 ```
-GET https://your-app-name.onrender.com/stats
+GET https://emogo-backend-leoalwaysgiveup.onrender.com/stats
 ```
 
 ### 📚 完整 API 文件：
 ```
-GET https://your-app-name.onrender.com/docs
+GET https://emogo-backend-leoalwaysgiveup.onrender.com/docs
 ```
 
 ---
@@ -185,7 +185,7 @@ GET https://your-app-name.onrender.com/docs
 
 **新增情緒資料：**
 ```bash
-curl -X POST "https://your-app-name.onrender.com/sentiments" \
+curl -X POST "https://emogo-backend-leoalwaysgiveup.onrender.com/sentiments" \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": "test_user",
@@ -197,16 +197,16 @@ curl -X POST "https://your-app-name.onrender.com/sentiments" \
 
 **匯出資料：**
 ```bash
-curl "https://your-app-name.onrender.com/export/sentiments"
+curl "https://emogo-backend-leoalwaysgiveup.onrender.com/export/sentiments"
 ```
 
 ### 使用瀏覽器測試
 
 直接在瀏覽器中開啟以下網址：
-- https://your-app-name.onrender.com/docs （互動式 API 文件）
-- https://your-app-name.onrender.com/export/vlogs
-- https://your-app-name.onrender.com/export/sentiments
-- https://your-app-name.onrender.com/export/gps
+- https://emogo-backend-leoalwaysgiveup.onrender.com/docs （互動式 API 文件）
+- https://emogo-backend-leoalwaysgiveup.onrender.com/export/vlogs
+- https://emogo-backend-leoalwaysgiveup.onrender.com/export/sentiments
+- https://emogo-backend-leoalwaysgiveup.onrender.com/export/gps
 
 ---
 
@@ -243,17 +243,3 @@ emogo-backend/
 
 ---
 
-## 📧 聯絡資訊
-
-如有問題，請聯絡助教或在課程討論區發問。
-
----
-
-## 📄 授權
-
-此專案為課程作業，僅供學習使用。
-
----
-
-**🎓 Psychoinformatics & Neuroinformatics - Week 11**  
-**👨‍🏫 Instructor: Tsung-Ren (Tren) Huang**
