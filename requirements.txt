@@ -1,0 +1,5 @@
+fastapi[all]
+motor[srv]
+pydantic
+python-multipart
+requests
