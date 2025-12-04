@@ -15,19 +15,16 @@
 ### 🎯 三種資料類型的匯出端點：
 
 1. **📹 Vlogs（影片日誌）**  
-   ```
-   GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/vlogs
-   ```
+   - **查看資料**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/vlogs`
+   - **下載檔案**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/vlogs?download=true` 📥
 
 2. **💭 Sentiments（情緒資料）**  
-   ```
-   GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/sentiments
-   ```
+   - **查看資料**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/sentiments`
+   - **下載檔案**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/sentiments?download=true` 📥
 
 3. **📍 GPS Coordinates（GPS 座標）**  
-   ```
-   GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/gps
-   ```
+   - **查看資料**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/gps`
+   - **下載檔案**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/gps?download=true` 📥
 
 ### 📈 統計資訊端點：
 ```
@@ -67,56 +64,6 @@ GET https://emogo-backend-leoalwaysgiveup.onrender.com/docs
    - Swagger UI: http://localhost:8000/docs
    - ReDoc: http://localhost:8000/redoc
 
----
-
-## 📡 API Endpoints
-
-### 基本路由
-
-| Method | Endpoint | 說明 |
-|--------|----------|------|
-| GET | `/` | API 首頁資訊 |
-| GET | `/health` | 健康檢查 |
-| GET | `/stats` | 統計資訊 |
-| GET | `/docs` | Swagger API 文件 |
-
-### Sentiments（情緒資料）
-
-| Method | Endpoint | 說明 |
-|--------|----------|------|
-| POST | `/sentiments` | 新增情緒資料 |
-| GET | `/sentiments` | 取得情緒資料列表 |
-| GET | `/export/sentiments` | **匯出所有情緒資料** ⭐ |
-
-**範例請求 (POST /sentiments):**
-```json
-{
-  "user_id": "user123",
-  "emotion": "happy",
-  "intensity": 0.85,
-  "note": "今天天氣很好！",
-  "timestamp": "2024-12-04T10:30:00Z"
-}
-```
-
-### GPS Coordinates（GPS 座標）
-
-| Method | Endpoint | 說明 |
-|--------|----------|------|
-| POST | `/gps` | 新增 GPS 座標 |
-| GET | `/gps` | 取得 GPS 座標列表 |
-| GET | `/export/gps` | **匯出所有 GPS 座標** ⭐ |
-
-**範例請求 (POST /gps):**
-```json
-{
-  "user_id": "user123",
-  "latitude": 25.0330,
-  "longitude": 121.5654,
-  "accuracy": 10.5,
-  "timestamp": "2024-12-04T10:30:00Z"
-}
-```
 
 ### Vlogs（影片日誌）
 
@@ -140,42 +87,7 @@ GET https://emogo-backend-leoalwaysgiveup.onrender.com/docs
 
 ---
 
-## 🔧 部署到 Render
 
-### 步驟 1：設定 MongoDB Atlas
-
-1. 前往 [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) 註冊並建立免費叢集
-2. 在 Security > Network Access 中，將 IP 白名單設定為 `0.0.0.0/0`（允許所有 IP）
-3. 在 Security > Database Access 中，建立資料庫使用者
-4. 取得連接字串（Connection String），格式如：
-   ```
-   mongodb+srv://username:password@cluster.mongodb.net/
-   ```
-
-### 步驟 2：部署到 Render
-
-1. 將程式碼推送到 GitHub
-2. 前往 [Render](https://render.com/) 並登入
-3. 點選 **New +** → **Web Service**
-4. 連接你的 GitHub repository
-5. 設定如下：
-   - **Name**: 選擇一個名稱（例如：emogo-backend）
-   - **Environment**: Python
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-
-6. 在 **Environment Variables** 中新增：
-   - `MONGODB_URI`: 你的 MongoDB 連接字串
-   - `DB_NAME`: `emogo_db`（或你想要的資料庫名稱）
-
-7. 點選 **Create Web Service**
-
-8. 等待部署完成後，你會得到一個 URL，例如：
-   ```
-   https://emogo-backend-xxxx.onrender.com
-   ```
-
-9. **記得回到這個 README.md 更新上方的 URL！**
 
 ---
 
@@ -231,15 +143,6 @@ emogo-backend/
 
 ---
 
-## 📝 作業要求檢查清單
-
-- [x] 使用 FastAPI 建立後端
-- [x] 使用 MongoDB 儲存資料
-- [x] 支援三種資料類型：vlogs, sentiments, GPS coordinates
-- [x] 提供資料匯出/下載 API endpoints
-- [x] 在 README.md 中列出資料匯出 URI
-- [x] 部署到公開伺服器（Render）
-- [x] 助教和老師可以透過 URI 查看/下載所有資料
 
 ---
 
