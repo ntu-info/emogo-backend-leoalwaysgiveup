@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException, File, UploadFile, Form
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi import FastAPI, HTTPException, File, UploadFile, Form, Query
+from fastapi.responses import JSONResponse, FileResponse, Response
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from typing import Optional, List
@@ -107,20 +107,31 @@ async def get_sentiments(limit: int = 100):
     return {"count": len(sentiments), "data": sentiments}
 
 @app.get("/export/sentiments")
-async def export_sentiments():
+async def export_sentiments(download: bool = Query(False, description="設為 true 可下載檔案")):
     """匯出所有情緒資料（資料下載頁面）"""
     sentiments = await app.mongodb["sentiments"].find().to_list(None)
     for sentiment in sentiments:
         sentiment["_id"] = str(sentiment["_id"])
     
-    return JSONResponse(
-        content={
-            "type": "sentiments",
-            "total_count": len(sentiments),
-            "exported_at": datetime.now().isoformat(),
-            "data": sentiments
-        }
-    )
+    content = {
+        "type": "sentiments",
+        "total_count": len(sentiments),
+        "exported_at": datetime.now().isoformat(),
+        "data": sentiments
+    }
+    
+    # 如果 download=true，觸發檔案下載
+    if download:
+        filename = f"sentiments_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        return Response(
+            content=json.dumps(content, ensure_ascii=False, indent=2),
+            media_type="application/json",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+    
+    return JSONResponse(content=content)
 
 # ===== GPS Coordinates API =====
 
@@ -149,20 +160,31 @@ async def get_gps_coordinates(limit: int = 100):
     return {"count": len(coordinates), "data": coordinates}
 
 @app.get("/export/gps")
-async def export_gps_coordinates():
+async def export_gps_coordinates(download: bool = Query(False, description="設為 true 可下載檔案")):
     """匯出所有 GPS 座標資料（資料下載頁面）"""
     coordinates = await app.mongodb["gps_coordinates"].find().to_list(None)
     for coord in coordinates:
         coord["_id"] = str(coord["_id"])
     
-    return JSONResponse(
-        content={
-            "type": "gps_coordinates",
-            "total_count": len(coordinates),
-            "exported_at": datetime.now().isoformat(),
-            "data": coordinates
-        }
-    )
+    content = {
+        "type": "gps_coordinates",
+        "total_count": len(coordinates),
+        "exported_at": datetime.now().isoformat(),
+        "data": coordinates
+    }
+    
+    # 如果 download=true，觸發檔案下載
+    if download:
+        filename = f"gps_coordinates_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        return Response(
+            content=json.dumps(content, ensure_ascii=False, indent=2),
+            media_type="application/json",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+    
+    return JSONResponse(content=content)
 
 # ===== Vlogs API =====
 
@@ -191,20 +213,31 @@ async def get_vlogs(limit: int = 100):
     return {"count": len(vlogs), "data": vlogs}
 
 @app.get("/export/vlogs")
-async def export_vlogs():
+async def export_vlogs(download: bool = Query(False, description="設為 true 可下載檔案")):
     """匯出所有影片日誌資料（資料下載頁面）"""
     vlogs = await app.mongodb["vlogs"].find().to_list(None)
     for vlog in vlogs:
         vlog["_id"] = str(vlog["_id"])
     
-    return JSONResponse(
-        content={
-            "type": "vlogs",
-            "total_count": len(vlogs),
-            "exported_at": datetime.now().isoformat(),
-            "data": vlogs
-        }
-    )
+    content = {
+        "type": "vlogs",
+        "total_count": len(vlogs),
+        "exported_at": datetime.now().isoformat(),
+        "data": vlogs
+    }
+    
+    # 如果 download=true，觸發檔案下載
+    if download:
+        filename = f"vlogs_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        return Response(
+            content=json.dumps(content, ensure_ascii=False, indent=2),
+            media_type="application/json",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+    
+    return JSONResponse(content=content)
 
 # ===== 統計資訊 API =====
 
