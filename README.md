@@ -12,7 +12,28 @@
 
 **✅ 已部署！API 網址：** `https://emogo-backend-leoalwaysgiveup.onrender.com`
 
-### 🎯 三種資料類型的匯出端點：
+### 🎭 主要儀表板（HTML Dashboard）⭐
+
+**👉 請助教直接開啟這個網址：**
+
+```
+https://emogo-backend-leoalwaysgiveup.onrender.com/
+```
+
+這是一個**互動式 HTML 頁面**，在這個頁面上可以：
+- ✅ 查看三種資料的統計數量
+- ✅ 預覽最新的資料
+- ✅ 直接點按鈕查看完整資料（JSON）
+- ✅ 直接點按鈕下載資料檔案
+- ✅ 訪問 API 文件
+
+**完全符合老師要求：「HTML page returned by FastAPI」** ✨
+
+---
+
+### 🎯 三種資料類型的直接匯出端點：
+
+如果需要直接訪問 API（不透過 Dashboard）：
 
 1. **📹 Vlogs（影片日誌）**  
    - **查看資料**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/vlogs`
@@ -26,15 +47,10 @@
    - **查看資料**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/gps`
    - **下載檔案**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/export/gps?download=true` 📥
 
-### 📈 統計資訊端點：
-```
-GET https://emogo-backend-leoalwaysgiveup.onrender.com/stats
-```
-
-### 📚 完整 API 文件：
-```
-GET https://emogo-backend-leoalwaysgiveup.onrender.com/docs
-```
+### 📈 其他端點：
+- **統計資訊**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/stats`
+- **API 文件**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/docs`
+- **API 資訊**：`GET https://emogo-backend-leoalwaysgiveup.onrender.com/api`
 
 ---
 
