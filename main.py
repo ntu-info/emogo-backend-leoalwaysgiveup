@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile, Form, Query
-from fastapi.responses import JSONResponse, FileResponse, Response
+from fastapi.responses import JSONResponse, FileResponse, Response, HTMLResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from typing import Optional, List
@@ -61,13 +61,297 @@ async def shutdown_db_client():
 
 # ===== 基本路由 =====
 
-@app.get("/")
-async def root():
-    """首頁 - API 資訊"""
+@app.get("/", response_class=HTMLResponse)
+async def dashboard():
+    """資料匯出/下載儀表板 - HTML 頁面"""
+    
+    # 取得統計資訊
+    vlogs_count = await app.mongodb["vlogs"].count_documents({})
+    sentiments_count = await app.mongodb["sentiments"].count_documents({})
+    gps_count = await app.mongodb["gps_coordinates"].count_documents({})
+    
+    # 取得最新的幾筆資料預覽
+    recent_vlogs = await app.mongodb["vlogs"].find().sort("_id", -1).limit(5).to_list(5)
+    recent_sentiments = await app.mongodb["sentiments"].find().sort("_id", -1).limit(5).to_list(5)
+    recent_gps = await app.mongodb["gps_coordinates"].find().sort("_id", -1).limit(5).to_list(5)
+    
+    # 轉換 ObjectId 為字串
+    for item in recent_vlogs + recent_sentiments + recent_gps:
+        item["_id"] = str(item["_id"])
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="zh-TW">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>EmoGo Backend - 資料匯出儀表板</title>
+        <style>
+            * {{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }}
+            body {{
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }}
+            .container {{
+                max-width: 1200px;
+                margin: 0 auto;
+            }}
+            .header {{
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                margin-bottom: 30px;
+                text-align: center;
+            }}
+            h1 {{
+                color: #667eea;
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }}
+            .subtitle {{
+                color: #666;
+                font-size: 1.1em;
+            }}
+            .stats {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+                margin-bottom: 30px;
+            }}
+            .stat-card {{
+                background: white;
+                padding: 25px;
+                border-radius: 15px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                text-align: center;
+                transition: transform 0.3s;
+            }}
+            .stat-card:hover {{
+                transform: translateY(-5px);
+            }}
+            .stat-number {{
+                font-size: 3em;
+                font-weight: bold;
+                color: #667eea;
+                margin: 10px 0;
+            }}
+            .stat-label {{
+                color: #666;
+                font-size: 1.1em;
+            }}
+            .export-section {{
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                margin-bottom: 20px;
+            }}
+            h2 {{
+                color: #667eea;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #667eea;
+            }}
+            .export-buttons {{
+                display: flex;
+                gap: 15px;
+                flex-wrap: wrap;
+                margin-bottom: 20px;
+            }}
+            .btn {{
+                padding: 12px 30px;
+                border: none;
+                border-radius: 8px;
+                font-size: 1em;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s;
+                font-weight: 600;
+            }}
+            .btn-primary {{
+                background: #667eea;
+                color: white;
+            }}
+            .btn-primary:hover {{
+                background: #5568d3;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            }}
+            .btn-success {{
+                background: #48bb78;
+                color: white;
+            }}
+            .btn-success:hover {{
+                background: #38a169;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+            }}
+            .preview-table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+                overflow-x: auto;
+                display: block;
+            }}
+            .preview-table th {{
+                background: #667eea;
+                color: white;
+                padding: 12px;
+                text-align: left;
+                font-weight: 600;
+            }}
+            .preview-table td {{
+                padding: 12px;
+                border-bottom: 1px solid #e2e8f0;
+            }}
+            .preview-table tr:hover {{
+                background: #f7fafc;
+            }}
+            .icon {{
+                font-size: 1.5em;
+            }}
+            .footer {{
+                text-align: center;
+                color: white;
+                margin-top: 30px;
+                padding: 20px;
+            }}
+            .api-link {{
+                color: white;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 10px 20px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 8px;
+                display: inline-block;
+                margin-top: 10px;
+                transition: all 0.3s;
+            }}
+            .api-link:hover {{
+                background: rgba(255,255,255,0.3);
+            }}
+            .empty-state {{
+                text-align: center;
+                padding: 40px;
+                color: #999;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🎭 EmoGo Backend</h1>
+                <p class="subtitle">情緒日誌資料匯出儀表板 | Data Export Dashboard</p>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="icon">📹</div>
+                    <div class="stat-number">{vlogs_count}</div>
+                    <div class="stat-label">Vlogs 影片日誌</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💭</div>
+                    <div class="stat-number">{sentiments_count}</div>
+                    <div class="stat-label">Sentiments 情緒資料</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📍</div>
+                    <div class="stat-number">{gps_count}</div>
+                    <div class="stat-label">GPS 座標資料</div>
+                </div>
+            </div>
+
+            <div class="export-section">
+                <h2>📹 Vlogs 影片日誌</h2>
+                <div class="export-buttons">
+                    <a href="/export/vlogs" class="btn btn-primary" target="_blank">
+                        👁️ 查看資料 (JSON)
+                    </a>
+                    <a href="/export/vlogs?download=true" class="btn btn-success">
+                        ⬇️ 下載資料檔案
+                    </a>
+                </div>
+                {_render_preview_table(recent_vlogs, ["title", "description", "timestamp"], "無影片日誌資料")}
+            </div>
+
+            <div class="export-section">
+                <h2>💭 Sentiments 情緒資料</h2>
+                <div class="export-buttons">
+                    <a href="/export/sentiments" class="btn btn-primary" target="_blank">
+                        👁️ 查看資料 (JSON)
+                    </a>
+                    <a href="/export/sentiments?download=true" class="btn btn-success">
+                        ⬇️ 下載資料檔案
+                    </a>
+                </div>
+                {_render_preview_table(recent_sentiments, ["emotion", "intensity", "note", "timestamp"], "無情緒資料")}
+            </div>
+
+            <div class="export-section">
+                <h2>📍 GPS Coordinates GPS 座標</h2>
+                <div class="export-buttons">
+                    <a href="/export/gps" class="btn btn-primary" target="_blank">
+                        👁️ 查看資料 (JSON)
+                    </a>
+                    <a href="/export/gps?download=true" class="btn btn-success">
+                        ⬇️ 下載資料檔案
+                    </a>
+                </div>
+                {_render_preview_table(recent_gps, ["latitude", "longitude", "accuracy", "timestamp"], "無 GPS 資料")}
+            </div>
+
+            <div class="footer">
+                <p>📚 <a href="/docs" class="api-link">查看完整 API 文件 (Swagger UI)</a></p>
+                <p style="margin-top: 10px; opacity: 0.8;">
+                    Psychoinformatics & Neuroinformatics<br>
+                    By Tsung-Ren (Tren) Huang
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html_content
+
+def _render_preview_table(data: list, fields: list, empty_message: str) -> str:
+    """輔助函數：渲染資料預覽表格"""
+    if not data:
+        return f'<div class="empty-state">{empty_message}</div>'
+    
+    headers = "".join(f"<th>{field}</th>" for field in fields)
+    rows = ""
+    for item in data[:5]:  # 只顯示前 5 筆
+        row_data = "".join(f"<td>{str(item.get(field, 'N/A'))[:50]}</td>" for field in fields)
+        rows += f"<tr>{row_data}</tr>"
+    
+    return f"""
+    <table class="preview-table">
+        <thead><tr>{headers}</tr></thead>
+        <tbody>{rows}</tbody>
+    </table>
+    <p style="margin-top: 10px; color: #999; font-size: 0.9em;">顯示最新 {len(data)} 筆資料（預覽）</p>
+    """
+
+@app.get("/api")
+async def api_info():
+    """API 資訊（JSON 格式）"""
     return {
         "message": "歡迎使用 EmoGo Backend API",
         "version": "1.0.0",
         "endpoints": {
+            "dashboard": "/ (HTML Dashboard)",
             "vlogs": "/vlogs (POST), /export/vlogs (GET)",
             "sentiments": "/sentiments (POST), /export/sentiments (GET)",
             "gps": "/gps (POST), /export/gps (GET)"
