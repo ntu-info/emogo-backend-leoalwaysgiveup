@@ -11,7 +11,7 @@
 
 ### 🎭 主要儀表板（HTML Dashboard）⭐
 
-**👉 請助教直接開啟這個網址：**
+**👉 請直接開啟這個網址：**
 
 ```
 https://emogo-backend-leoalwaysgiveup.onrender.com/
@@ -98,50 +98,7 @@ emogo-backend/
 └── README.md           # 專案說明文件（本檔案）
 ```
 
----
 
-## 🚀 本地開發
-
-### 安裝依賴
-```bash
-pip install -r requirements.txt
-```
-
-### 設定環境變數
-```bash
-export MONGODB_URI="mongodb+srv://username:password@cluster.mongodb.net/"
-export DB_NAME="emogo_db"
-```
-
-### 啟動伺服器
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### 開啟瀏覽器
-- Dashboard: http://localhost:8000/
-- API 文件: http://localhost:8000/docs
-
----
-
-## ✅ 作業要求檢查清單
-
-- [x] 使用 FastAPI 建立後端
-- [x] 使用 MongoDB 儲存資料
-- [x] 支援三種資料類型（Vlogs, Sentiments, GPS Coordinates）
-- [x] 提供資料匯出/下載功能
-- [x] 在 README.md 中列出匯出 URI
-- [x] **HTML Dashboard 頁面**（由 FastAPI 產生）
-- [x] 部署到公開伺服器（Render）
-- [x] 助教可透過 URI 查看/下載所有資料
-
----
-
-## 📧 課程資訊
-
-**課程**：Psychoinformatics & Neuroinformatics  
-**教授**：Tsung-Ren (Tren) Huang 黃從仁  
-**學期**：2025 Fall
 
 ---
 
