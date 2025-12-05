@@ -96,6 +96,7 @@ emogo-backend/
 ├── render.yaml          # Render 部署設定
 ├── .gitignore          # Git 忽略檔案
 └── README.md           # 專案說明文件（本檔案）
+└── cursor_emobackend_chat.md
 ```
 
 
